@@ -9,7 +9,7 @@ const app = express();
 
 // CORS config
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // e.g., http://localhost:3000 or Azure domain
+  origin: process.env.FRONTEND_URL, // e.g., http://localhost:3000 or your Azure domain
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -38,17 +38,16 @@ app.use("/auth", require("./routes/auth"));
 app.use("/slots", require("./routes/slots"));
 app.use("/police", require("./routes/police"));
 
-// ✅ Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  const clientBuildPath = path.join(__dirname, "dist");
+// ✅ Serve frontend build files
+const clientBuildPath = path.join(__dirname, "client", "build");
+if (process.env.NODE_ENV === "production" && require("fs").existsSync(clientBuildPath)) {
   app.use(express.static(clientBuildPath));
 
-  // React fallback routing
+  // React fallback route
   app.get("*", (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 } else {
-  // Development root route
   app.get("/", (req, res) => {
     res.send("EPoliceLanka backend is running ✅ (DEV)");
   });
@@ -60,7 +59,7 @@ app.listen(PORT, async () => {
   try {
     await sequelize.authenticate();
     console.log("✅ DB connected successfully.");
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
   } catch (err) {
     console.error("❌ Unable to connect to the DB:", err);
