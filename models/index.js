@@ -9,7 +9,7 @@ const db = {};
 let sequelize;
 
 if (env === "production") {
-  // In production (Azure), build connection string from individual env vars
+  // Build connection string from env vars for production
   const {
     DB_HOST,
     DB_NAME,
@@ -32,23 +32,23 @@ if (env === "production") {
     logging: false,
   });
 } else if (config.use_env_variable) {
-  // If config says to use env variable (usually development)
+  // Use connection string from environment variable (development)
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  // Normal config with separate parameters
+  // Use separate params from config (fallback)
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
 fs.readdirSync(__dirname)
-  .filter((file) => {
+  .filter(file => {
     return file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js";
   })
-  .forEach((file) => {
+  .forEach(file => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
-Object.keys(db).forEach((modelName) => {
+Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
