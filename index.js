@@ -39,7 +39,7 @@ app.use("/slots", require("./routes/slots"));
 app.use("/police", require("./routes/police"));
 
 // ✅ Serve frontend build files
-const clientBuildPath = path.join(__dirname, "client", "build");
+const clientBuildPath = path.join(__dirname, "dist");
 if (process.env.NODE_ENV === "production" && require("fs").existsSync(clientBuildPath)) {
   app.use(express.static(clientBuildPath));
 
