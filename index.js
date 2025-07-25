@@ -40,6 +40,11 @@ app.use("/auth", require("./routes/auth"));
 app.use("/slots", require("./routes/slots"));
 app.use("/police", require("./routes/police"));
 
+// 🟢 Add root route
+app.get("/", (req, res) => {
+  res.send("EPoliceLanka backend is running ✅");
+});
+
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, async () => {
