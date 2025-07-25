@@ -9,38 +9,36 @@ const app = express();
 
 // CORS config with credentials for frontend
 const corsOptions = {
-  origin: "http://localhost:5173", 
-  credentials: true,              
+  origin: process.env.FRONTEND_URL,  
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
-// jSON body parser middleware
+// JSON body parser middleware
 app.use(express.json());
 
-// Session setup 
+// Session setup
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "thisIsASuperSecretJWTKey", 
+    secret: process.env.SESSION_SECRET || "thisIsASuperSecretJWTKey",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, 
+      secure: process.env.NODE_ENV === "production", 
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 2, 
     },
   })
 );
 
+// Static files for uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
+// Routes
 app.use("/complaints", require("./routes/complaints"));
 app.use("/auth", require("./routes/auth"));
 app.use("/slots", require("./routes/slots"));
-
-
 app.use("/police", require("./routes/police"));
-
 
 const PORT = process.env.PORT || 8000;
 
